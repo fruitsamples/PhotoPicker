@@ -2,7 +2,7 @@
      File: OverlayViewController.m 
  Abstract: The secondary view controller managing the overlap view to the camera.
   
-  Version: 1.0 
+  Version: 1.1 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,7 +42,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2010 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2011 Apple Inc. All Rights Reserved. 
   
  */
 
@@ -88,6 +88,8 @@ enum
     self.cancelButton = nil;
     
     self.cameraTimer = nil;
+    
+    [super viewDidUnload];
 }
 
 - (void)dealloc
@@ -116,7 +118,7 @@ enum
         //
         self.imagePickerController.showsCameraControls = NO;
         
-        if (self.imagePickerController.cameraOverlayView != self.view)
+        if ([[self.imagePickerController.cameraOverlayView subviews] count] == 0)
         {
             // setup our custom overlay view for the camera
             //
@@ -124,11 +126,11 @@ enum
             CGRect overlayViewFrame = self.imagePickerController.cameraOverlayView.frame;
             CGRect newFrame = CGRectMake(0.0,
                                          CGRectGetHeight(overlayViewFrame) -
-                                         self.view.frame.size.height - 9.0,
+                                         self.view.frame.size.height - 10.0,
                                          CGRectGetWidth(overlayViewFrame),
-                                         self.view.frame.size.height + 9.0);
+                                         self.view.frame.size.height + 10.0);
             self.view.frame = newFrame;
-            self.imagePickerController.cameraOverlayView = self.view;
+            [self.imagePickerController.cameraOverlayView addSubview:self.view];
         }
     }
 }
