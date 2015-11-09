@@ -2,7 +2,7 @@
      File: AppDelegate.m 
  Abstract: The application delegate class used for installing our main navigation controller.
   
-  Version: 1.1 
+  Version: 1.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,27 +42,30 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
 #import "AppDelegate.h"
 
-@implementation AppDelegate;
+@interface AppDelegate ()
+@property (nonatomic, retain) IBOutlet UINavigationController *navController;
+@end
 
-@synthesize window, navController;
+@implementation AppDelegate;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
-    // create window and set up table view controller
-	[window addSubview:navController.view];
-	[window makeKeyAndVisible];
+	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
+    _window = [[UIWindow alloc] initWithFrame: screenBounds];
+    self.window.rootViewController = self.navController;
+	[self.window makeKeyAndVisible];
 }
 
 - (void)dealloc
 {
-	[navController release];
-    [window release];
+	[_navController release];
+    [_window release];
 	
     [super dealloc];
 }

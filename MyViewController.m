@@ -2,7 +2,7 @@
      File: MyViewController.m 
  Abstract: The main view controller of this app.
   
-  Version: 1.1 
+  Version: 1.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,15 +42,28 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
 #import "MyViewController.h"
 
-@implementation MyViewController
+@interface MyViewController ()
 
-@synthesize imageView, myToolbar, overlayViewController, capturedImages;
+@property (nonatomic, retain) IBOutlet UIImageView *imageView;
+@property (nonatomic, retain) IBOutlet UIToolbar *myToolbar;
+
+@property (nonatomic, retain) OverlayViewController *overlayViewController;
+
+@property (nonatomic, retain) NSMutableArray *capturedImages;
+
+// toolbar buttons
+- (IBAction)photoLibraryAction:(id)sender;
+- (IBAction)cameraAction:(id)sender;
+
+@end
+
+@implementation MyViewController
 
 
 #pragma mark -
@@ -87,11 +100,11 @@
 
 - (void)dealloc
 {	
-	[imageView release];
-	[myToolbar release];
+	[_imageView release];
+	[_myToolbar release];
     
-    [overlayViewController release];
-	[capturedImages release];
+    [_overlayViewController release];
+	[_capturedImages release];
     
     [super dealloc];
 }
@@ -103,7 +116,7 @@
 - (void)showImagePicker:(UIImagePickerControllerSourceType)sourceType
 {
     if (self.imageView.isAnimating)
-        self.imageView.stopAnimating;
+        [self.imageView stopAnimating];
 	
     if (self.capturedImages.count > 0)
         [self.capturedImages removeAllObjects];
@@ -158,7 +171,7 @@
             
             self.imageView.animationDuration = 5.0;    // show each captured photo for 5 seconds
             self.imageView.animationRepeatCount = 0;   // animate forever (show all photos)
-            self.imageView.startAnimating;
+            [self.imageView startAnimating];
         }
     }
 }

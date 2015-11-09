@@ -2,7 +2,7 @@
      File: OverlayViewController.h 
  Abstract: The secondary view controller managing the overlap view to the camera.
   
-  Version: 1.1 
+  Version: 1.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,7 +42,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
@@ -54,39 +54,12 @@
 @interface OverlayViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 {
     id <OverlayViewControllerDelegate> delegate;
-    
-    UIImagePickerController *imagePickerController;
-    
-@private
-    UIBarButtonItem *takePictureButton;
-    UIBarButtonItem *startStopButton;
-    UIBarButtonItem *timedButton;
-    UIBarButtonItem *cancelButton;
-    
-    NSTimer *tickTimer;
-    NSTimer *cameraTimer;
-
-    SystemSoundID tickSound;
 }    
 
 @property (nonatomic, assign) id <OverlayViewControllerDelegate> delegate;
 @property (nonatomic, retain) UIImagePickerController *imagePickerController;
 
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *takePictureButton;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *startStopButton;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *timedButton;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *cancelButton;
-
-@property (nonatomic, retain) NSTimer *tickTimer;
-@property (nonatomic, retain) NSTimer *cameraTimer;
-
 - (void)setupImagePicker:(UIImagePickerControllerSourceType)sourceType;
-
-// camera page (overlay view)
-- (IBAction)done:(id)sender;
-- (IBAction)takePhoto:(id)sender;
-- (IBAction)startStop:(id)sender;
-- (IBAction)timedTakePhoto:(id)sender;
 
 @end
 

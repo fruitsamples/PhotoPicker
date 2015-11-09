@@ -2,7 +2,7 @@
      File: OverlayViewController.m 
  Abstract: The secondary view controller managing the overlap view to the camera.
   
-  Version: 1.1 
+  Version: 1.2 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,7 +42,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
@@ -54,13 +54,29 @@ enum
 	kRepeatingShot  // user wants to take repeating shots
 };
 
+@interface OverlayViewController ( )
+
+@property (assign) SystemSoundID tickSound;
+
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *takePictureButton;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *startStopButton;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *timedButton;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *cancelButton;
+ 
+@property (nonatomic, retain) NSTimer *tickTimer;
+@property (nonatomic, retain) NSTimer *cameraTimer;
+
+// camera page (overlay view)
+- (IBAction)done:(id)sender;
+- (IBAction)takePhoto:(id)sender;
+- (IBAction)startStop:(id)sender;
+- (IBAction)timedTakePhoto:(id)sender;
+
+@end
+
 @implementation OverlayViewController
 
-@synthesize delegate, takePictureButton, startStopButton,
-            cancelButton, timedButton,
-            tickTimer, cameraTimer,
-            imagePickerController;
-
+@synthesize delegate;
 
 #pragma mark -
 #pragma mark OverlayViewController
@@ -72,7 +88,7 @@ enum
         AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:
                                                     [[NSBundle mainBundle] pathForResource:@"tick"
                                                                                     ofType:@"aiff"]],
-                                         &tickSound);
+                                                    &_tickSound);
 
         self.imagePickerController = [[[UIImagePickerController alloc] init] autorelease];
         self.imagePickerController.delegate = self;
@@ -94,16 +110,16 @@ enum
 
 - (void)dealloc
 {	
-    [takePictureButton release];
-    [startStopButton release];
-    [cancelButton release];
-    [timedButton release];
+    [_takePictureButton release];
+    [_startStopButton release];
+    [_cancelButton release];
+    [_timedButton release];
     
-    [imagePickerController release];
-    AudioServicesDisposeSystemSoundID(tickSound);
+    [_imagePickerController release];
+    AudioServicesDisposeSystemSoundID(_tickSound);
 
-    [cameraTimer release];
-    [tickTimer release];
+    [_cameraTimer release];
+    [_tickTimer release];
     
     [super dealloc];
 }
@@ -144,10 +160,10 @@ enum
     
     // stop all timers
     [self.cameraTimer invalidate];
-    cameraTimer = nil;
+    _cameraTimer = nil;
     
     [self.tickTimer invalidate];
-    tickTimer = nil;
+    _tickTimer = nil;
 }
 
 // update the UI after an image has been chosen or picture taken
@@ -187,18 +203,18 @@ enum
     self.timedButton.enabled = NO;
     self.startStopButton.enabled = NO;
 
-    if (cameraTimer != nil)
-        [cameraTimer invalidate];
-    cameraTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+    if (self.cameraTimer != nil)
+        [self.cameraTimer invalidate];
+    _cameraTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
                                                    target:self
                                                  selector:@selector(timedPhotoFire:)
                                                  userInfo:[NSNumber numberWithInt:kOneShot]
                                                   repeats:YES];
 
     // start the timer to sound off a tick every 1 second (sound effect before a timed picture is taken)
-    if (tickTimer != nil)
-        [tickTimer invalidate];
-    tickTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+    if (self.tickTimer != nil)
+        [self.tickTimer invalidate];
+    _tickTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
                                                    target:self
                                                  selector:@selector(tickFire:)
                                                  userInfo:nil
@@ -216,7 +232,7 @@ enum
     {
         // stop and reset the timer
         [self.cameraTimer invalidate];
-        cameraTimer = nil;
+        _cameraTimer = nil;
 
         [self finishAndUpdate];
     }
@@ -239,12 +255,12 @@ enum
         self.timedButton.enabled = NO;
         self.takePictureButton.enabled = NO;
 
-        cameraTimer = [NSTimer scheduledTimerWithTimeInterval:1.5   // fire every 1.5 seconds
+        _cameraTimer = [NSTimer scheduledTimerWithTimeInterval:1.5   // fire every 1.5 seconds
                                                        target:self
                                                      selector:@selector(timedPhotoFire:)
                                                      userInfo:[NSNumber numberWithInt:kRepeatingShot]
                                                       repeats:YES];
-        [cameraTimer fire];	// start taking pictures right away
+        [self.cameraTimer fire];	// start taking pictures right away
     }
 }
 
@@ -264,10 +280,10 @@ enum
         {
             // timer fired for a delayed single shot
             [self.cameraTimer invalidate];
-            cameraTimer = nil;
+            _cameraTimer = nil;
             
             [self.tickTimer invalidate];
-            tickTimer = nil;
+            _tickTimer = nil;
             
             break;
         }
@@ -283,7 +299,7 @@ enum
 // gets called by our delayed camera shot timer to play a tick noise
 - (void)tickFire:(NSTimer *)timer
 {
-	AudioServicesPlaySystemSound(tickSound);
+	AudioServicesPlaySystemSound(self.tickSound);
 }
 
 

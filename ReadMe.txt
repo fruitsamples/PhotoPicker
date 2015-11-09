@@ -10,12 +10,12 @@ Among the custom features of the camera is to take a single picture, timed pictu
 ===========================================================================
 BUILD REQUIREMENTS:
 
-iOS 4.3 SDK
+iOS 5.0 SDK
 
 ===========================================================================
 RUNTIME REQUIREMENTS:
 
-iPhone OS 3.2 or later
+iOS 5.0 or later
 
 ===========================================================================
 PACKAGING LIST:
@@ -32,8 +32,9 @@ Custom UIViewController used for managing the overlay view with the camera.
 ===========================================================================
 CHANGES FROM PREVIOUS VERSIONS:
 
+1.2 - Upgraded to iOS 5.0 SDK, removed some compiler warnings.
 1.1 - Upgraded to iOS 4.3 SDK, fixed issue with camera overlay placement.
 1.0 - First version.
 
 ===========================================================================
-Copyright (C) 2010-2011 Apple Inc. All rights reserved.
+Copyright (C) 2010-2012 Apple Inc. All rights reserved.
